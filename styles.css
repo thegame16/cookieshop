@@ -1,159 +1,170 @@
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
+// CONFIGURATION: Replace with your phone number (Country Code + Number)
+const BAKERY_PHONE_NUMBER = "233537682660"; 
 
-body {
-  background-color: #fdf8f5;
-  color: #4a3b32;
-  padding-bottom: 40px;
-}
-
-header {
-  background-color: #e07a5f;
-  color: white;
-  text-align: center;
-  padding: 2rem 1rem;
-}
-
-header h1 {
-  font-size: 2.2rem;
-  margin-bottom: 0.5rem;
-}
-
-.container {
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 0 1rem;
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 2rem;
-}
-
-/* Responsive grid for mobile */
-@media (max-width: 768px) {
-  .container {
-    grid-template-columns: 1fr;
+// 📸 MENU DATA - ADD YOUR PICTURE LINKS HERE
+const menuItems = [
+  { 
+    id: 1, 
+    name: "Butter Croissant", 
+    desc: "Flaky, buttery, and baked to golden perfection.",
+    price: 3.50, 
+    image: "https://images.unsplash.com/photo-1555507036-ab1e4006aaeb?auto=format&fit=crop&w=400&q=80" // <--- Replace this URL
+  },
+  { 
+    id: 2, 
+    name: "Chocolate Muffin", 
+    desc: "Rich double chocolate muffin with chocolate chips.",
+    price: 2.75, 
+    image: "https://images.unsplash.com/photo-1607958996333-41aef7caefaa?auto=format&fit=crop&w=400&q=80" // <--- Replace this URL
+  },
+  { 
+    id: 3, 
+    name: "Sourdough Loaf", 
+    desc: "Artisan sourdough with a crisp crust and chewy center.",
+    price: 6.00, 
+    image: "https://images.unsplash.com/photo-1585478259715-876acc5be8eb?auto=format&fit=crop&w=400&q=80" // <--- Replace this URL
+  },
+  { 
+    id: 4, 
+    name: "Cinnamon Roll", 
+    desc: "Warm cinnamon spirals topped with cream cheese frosting.",
+    price: 4.00, 
+    image: "https://images.unsplash.com/photo-1509365465985-25d11c17e812?auto=format&fit=crop&w=400&q=80" // <--- Replace this URL
+  },
+  { 
+    id: 5, 
+    name: "Strawberry Tart", 
+    desc: "Fresh glazed strawberries on a buttery pastry shell.",
+    price: 4.50, 
+    image: "https://images.unsplash.com/photo-1519869325930-281384150729?auto=format&fit=crop&w=400&q=80" // <--- Replace this URL
+  },
+  { 
+    id: 6, 
+    name: "Baguette", 
+    desc: "Traditional French baguette, perfect for sandwiches.",
+    price: 3.00, 
+    image: "https://images.unsplash.com/photo-1597079910443-60c43fc4f729?auto=format&fit=crop&w=400&q=80" // <--- Replace this URL
   }
+];
+
+let cart = [];
+
+// Load Menu onto page
+function renderMenu() {
+  const menuGrid = document.getElementById("menu-grid");
+  menuGrid.innerHTML = "";
+
+  menuItems.forEach(item => {
+    const card = document.createElement("div");
+    card.className = "card";
+    
+    // Notice the HTML structure below creates the image slot
+    card.innerHTML = `
+      <div class="card-img-slot">
+        <img src="${item.image}" alt="${item.name}" loading="lazy">
+      </div>
+      <div class="card-content">
+        <h3>${item.name}</h3>
+        <p class="desc">${item.desc}</p>
+        <div class="price-row">
+          <span class="price">$${item.price.toFixed(2)}</span>
+          <button class="add-btn" onclick="addToCart(${item.id})">Add to Order</button>
+        </div>
+      </div>
+    `;
+    menuGrid.appendChild(card);
+  });
 }
 
-/* Menu Grid */
-.menu-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1rem;
+// Add item to cart
+function addToCart(itemId) {
+  const existingIndex = cart.findIndex(i => i.id === itemId);
+  
+  if (existingIndex > -1) {
+    cart[existingIndex].qty += 1;
+  } else {
+    const item = menuItems.find(i => i.id === itemId);
+    cart.push({ ...item, qty: 1 });
+  }
+  
+  updateCartUI();
 }
 
-.card {
-  background: white;
-  border-radius: 10px;
-  padding: 1rem;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+// Remove item from cart
+function removeFromCart(itemId) {
+  cart = cart.filter(item => item.id !== itemId);
+  updateCartUI();
 }
 
-.card h3 {
-  font-size: 1.1rem;
-  margin: 0.5rem 0;
+// Update Cart Display & Total
+function updateCartUI() {
+  const cartItemsContainer = document.getElementById("cart-items");
+  const totalPriceElement = document.getElementById("total-price");
+  
+  if (cart.length === 0) {
+    cartItemsContainer.innerHTML = `<p class="empty-msg">Your cart is empty.</p>`;
+    totalPriceElement.textContent = "$0.00";
+    return;
+  }
+
+  cartItemsContainer.innerHTML = "";
+  let total = 0;
+
+  cart.forEach(item => {
+    const itemTotal = item.price * item.qty;
+    total += itemTotal;
+
+    const row = document.createElement("div");
+    row.className = "cart-item";
+    row.innerHTML = `
+      <div>
+        <strong>${item.name}</strong> x ${item.qty}<br>
+        <small style="color: #666;">$${itemTotal.toFixed(2)}</small>
+      </div>
+      <button class="remove-btn" onclick="removeFromCart(${item.id})">Remove</button>
+    `;
+    cartItemsContainer.appendChild(row);
+  });
+
+  totalPriceElement.textContent = `$${total.toFixed(2)}`;
 }
 
-.card .price {
-  font-weight: bold;
-  color: #e07a5f;
-  margin-bottom: 1rem;
-}
+// Handle Order Submission
+document.getElementById("order-form").addEventListener("submit", function(e) {
+  e.preventDefault();
 
-button {
-  background-color: #81b29a;
-  color: white;
-  border: none;
-  padding: 0.6rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.2s;
-}
+  if (cart.length === 0) {
+    alert("Please add at least one item to your order!");
+    return;
+  }
 
-button:hover {
-  background-color: #649a80;
-}
+  const name = document.getElementById("cust-name").value.trim();
+  const address = document.getElementById("cust-address").value.trim();
+  const notes = document.getElementById("cust-notes").value.trim();
 
-/* Cart Section */
-.cart-section {
-  background: white;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
-  height: fit-content;
-}
+  // Calculate Total
+  const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
 
-.cart-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.8rem;
-  border-bottom: 1px solid #f0f0f0;
-  padding-bottom: 0.5rem;
-}
+  // Format Order Message for WhatsApp
+  let message = `*NEW ORDER - Sweet Treats Bakery*\n\n`;
+  message += `*Customer:* ${name}\n`;
+  message += `*Address:* ${address}\n`;
+  if (notes) message += `*Notes:* ${notes}\n`;
+  message += `\n*Items Ordered:*\n`;
 
-.empty-msg {
-  color: #888;
-  font-style: italic;
-  margin-top: 0.5rem;
-}
+  cart.forEach(item => {
+    message += `• ${item.name} (x${item.qty}) - $${(item.price * item.qty).toFixed(2)}\n`;
+  });
 
-.total-box {
-  display: flex;
-  justify-content: space-between;
-  font-size: 1.2rem;
-  font-weight: bold;
-  margin: 1.5rem 0;
-  padding-top: 0.5rem;
-  border-top: 2px solid #e07a5f;
-}
+  message += `\n*Total Amount:* $${total.toFixed(2)}`;
 
-/* Form Styling */
-form {
-  display: flex;
-  flex-direction: column;
-  gap: 0.8rem;
-}
+  // Encode message for URI link
+  const encodedMessage = encodeURIComponent(message);
+  const whatsappURL = `https://wa.me/${BAKERY_PHONE_NUMBER}?text=${encodedMessage}`;
 
-input, textarea {
-  width: 100%;
-  padding: 0.6rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 0.9rem;
-}
+  // Open WhatsApp in new tab
+  window.open(whatsappURL, "_blank");
+});
 
-textarea {
-  resize: vertical;
-  height: 60px;
-}
-
-.whatsapp-btn {
-  background-color: #25d366;
-  font-size: 1rem;
-  padding: 0.8rem;
-}
-
-.whatsapp-btn:hover {
-  background-color: #1ebc57;
-}
-
-.remove-btn {
-  background-color: #e76f51;
-  padding: 0.2rem 0.5rem;
-  font-size: 0.8rem;
-}
-
-.remove-btn:hover {
-  background-color: #d05030;
-}
+// Initialize
+renderMenu();
