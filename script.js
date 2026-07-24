@@ -1,5 +1,5 @@
 // CONFIGURATION: Replace with your phone number (Country Code + Number)
-const BAKERY_PHONE_NUMBER = "15551234567"; 
+const BAKERY_PHONE_NUMBER = "2330207437640"; 
 
 // Sample Menu Data
 const menuItems = [
