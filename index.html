@@ -87,7 +87,7 @@
             <li><a href="#contact">Visit Us</a></li>
         </ul>
         <div class="cart-icon" onclick="toggleCart()">
-            Cart 🛍️ <span class="cart-count" id="cart-count">0</span>
+            Cart  <span class="cart-count" id="cart-count">0</span>
         </div>
     </nav>
 
@@ -160,8 +160,8 @@
     </div>
 
     <footer id="contact">
-        <p>📍 45 Artisan Lane, Bakery District | 📞 (555) 123-4567</p>
-        <p>&copy; 2026 Sweet Crust Bakery.</p>
+        <p> PANTAN P & T |  (233) 55 540 1993 </p>
+        <p>&copy; 2026 Blessed Bakes.</p>
     </footer>
 
     <script>
@@ -170,16 +170,31 @@
         // Format: Country code + number (No plus sign, no spaces)
         // Example for US: "12345678900"
         // Example for UK: "447123456789"
-        const SELLER_PHONE_NUMBER = "12345678900"; 
+        const SELLER_PHONE_NUMBER = "2330207437640"; 
         // ==========================================
 
         const products = [
-            { id: 1, name: 'Sourdough Loaf', price: 7.50, category: 'Bread', img: 'https://images.unsplash.com/photo-1585478259715-876a6a81fa08?w=500&q=80' },
-            { id: 2, name: 'Almond Croissant', price: 4.50, category: 'Pastry', img: 'https://images.unsplash.com/photo-1623366302587-b24888be62f2?w=500&q=80' },
-            { id: 3, name: 'Seasonal Fruit Tart', price: 6.00, category: 'Dessert', img: 'https://images.unsplash.com/photo-1519869325930-281384150729?w=500&q=80' },
-            { id: 4, name: 'Cinnamon Roll', price: 4.00, category: 'Pastry', img: 'https://images.unsplash.com/photo-1509365465994-3e54546878b3?w=500&q=80' },
-            { id: 5, name: 'Chocolate Babka', price: 12.00, category: 'Bread', img: 'https://images.unsplash.com/photo-1601000938259-9e92002320b2?w=500&q=80' },
-            { id: 6, name: 'Vanilla Bean Éclair', price: 5.50, category: 'Dessert', img: 'https://images.unsplash.com/photo-1612203985729-70726954388c?w=500&q=80' }
+            { 
+                id: 1, 
+                name: 'Classic Chocolate Chip Cookies', 
+                price: 3.50, 
+                category: 'Dessert', 
+                img: 'chocolatechip.jpeg' 
+            },
+            { 
+                id: 2, 
+                name: 'Red Velvet White Chip Cookies', 
+                price: 4.00, 
+                category: 'Dessert', 
+                img: 'redvelvet.jpeg' 
+            },
+            { 
+                id: 3, 
+                name: 'Savory Stuffed Meat Bread', 
+                price: 6.50, 
+                category: 'Bread', 
+                img: 'meatbreas.jpeg' 
+            }
         ];
 
         let cart = JSON.parse(localStorage.getItem('bakeryCart')) || [];
@@ -305,10 +320,10 @@
 
             // Build the WhatsApp message string
             let orderText = `🍞 *New Bakery Order!*\n\n`;
-            orderText += `👤 *Name:* ${name}\n`;
-            orderText += `🗓️ *Delivery Date:* ${formattedDate}\n`;
-            orderText += `📍 *Address:* ${address}\n\n`;
-            orderText += `🛍️ *Order Details:*\n`;
+            orderText += ` *Name:* ${name}\n`;
+            orderText += ` *Delivery Date:* ${formattedDate}\n`;
+            orderText += ` *Address:* ${address}\n\n`;
+            orderText += ` *Order Details:*\n`;
             
             let total = 0;
             cart.forEach(item => {
@@ -317,14 +332,14 @@
                 total += itemTotal;
             });
             
-            orderText += `\n💰 *Total:* $${total.toFixed(2)}\n`;
-            orderText += `\nThank you! Please confirm my order.`;
+            orderText += `\n *Total:* $${total.toFixed(2)}\n`;
+            orderText += `\nThank you! order has been confirmed.`;
 
             // Encode the text so it works in a URL
             const encodedText = encodeURIComponent(orderText);
             
             // Create the final WhatsApp API URL
-            const whatsappUrl = `https://wa.me/${233537682660}?text=${encodedText}`;
+            const whatsappUrl = `https://wa.me/${2330207437640}?text=${encodedText}`;
             
             // Open WhatsApp in a new tab
             window.open(whatsappUrl, '_blank');
