@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sweet Treats Bakery</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <h1>🥐 Sweet Treats Bakery</h1>
+    <p>Freshly baked goods delivered to your doorstep!</p>
+  </header>
+
+  <main class="container">
+    <!-- Menu Section -->
+    <section class="menu-section">
+      <h2>Our Menu</h2>
+      <div class="menu-grid" id="menu-grid">
+        <!-- Menu items dynamically loaded via JS -->
+      </div>
+    </section>
+
+    <!-- Cart / Order Section -->
+    <section class="cart-section">
+      <h2>Your Order</h2>
+      <div id="cart-items">
+        <p class="empty-msg">Your cart is empty.</p>
+      </div>
+      
+      <div class="total-box">
+        <span>Total:</span>
+        <span id="total-price">$0.00</span>
+      </div>
+
+      <!-- Customer Details Form -->
+      <form id="order-form">
+        <h3>Delivery Details</h3>
+        <input type="text" id="cust-name" placeholder="Your Name" required>
+        <input type="text" id="cust-address" placeholder="Delivery Address" required>
+        <textarea id="cust-notes" placeholder="Special Instructions / Allergies (Optional)"></textarea>
+        
+        <button type="submit" class="whatsapp-btn">
+          📲 Order via WhatsApp
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <script src="script.js"></script>
+</body>
+</html>
