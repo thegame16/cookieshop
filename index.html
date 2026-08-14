@@ -75,9 +75,191 @@
             .hero h1 { font-size: 2.8rem; }
             .cart-sidebar { width: 100%; right: -100%; }
         }
+
+        /* ================= START: Splash / Startup Display ================= */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at 50% 40%, #3a2214 0%, #2a180d 55%, #1c0f07 100%);
+            overflow: hidden;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+        }
+        #splash-screen.splash-hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #splash-screen::before {
+            content: "";
+            position: absolute;
+            inset: -20%;
+            background-image:
+                radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,0.15) 0%, transparent 60%),
+                radial-gradient(2px 2px at 70% 65%, rgba(255,255,255,0.12) 0%, transparent 60%),
+                radial-gradient(2px 2px at 40% 80%, rgba(255,255,255,0.1) 0%, transparent 60%),
+                radial-gradient(2px 2px at 85% 20%, rgba(255,255,255,0.12) 0%, transparent 60%);
+            animation: splash-drift 12s linear infinite;
+            opacity: 0.6;
+            z-index: 2;
+        }
+        @keyframes splash-drift {
+            0% { transform: translateY(0) rotate(0deg); }
+            100% { transform: translateY(-40px) rotate(3deg); }
+        }
+
+        /* Sliding background photo backdrop */
+        .splash-bg-slides {
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .splash-bg-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            animation-name: splash-slideshow;
+            animation-duration: 16s;
+            animation-iteration-count: infinite;
+            animation-timing-function: ease-in-out;
+        }
+        .splash-bg-slide:nth-child(1) { background-image: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=70'); animation-delay: 0s; }
+        .splash-bg-slide:nth-child(2) { background-image: url('https://images.unsplash.com/photo-1517433670267-08bbd4be890f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=70'); animation-delay: 4s; }
+        .splash-bg-slide:nth-child(3) { background-image: url('https://images.unsplash.com/photo-1587049633312-d628ae50a8ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=70'); animation-delay: 8s; }
+        .splash-bg-slide:nth-child(4) { background-image: url('https://images.unsplash.com/photo-1486427944299-d1955d23e34d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1600&q=70'); animation-delay: 12s; }
+        @keyframes splash-slideshow {
+            0%   { opacity: 0; transform: scale(1.08); }
+            4%   { opacity: 0.55; }
+            20%  { opacity: 0.55; }
+            25%  { opacity: 0; transform: scale(1.14); }
+            100% { opacity: 0; }
+        }
+        .splash-bg-overlay {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(180deg, rgba(20,11,5,0.75) 0%, rgba(26,15,7,0.85) 55%, rgba(18,10,4,0.94) 100%);
+        }
+        #splash-screen > *:not(.splash-bg-slides):not(.splash-bg-overlay) {
+            position: relative;
+            z-index: 3;
+        }
+        .splash-ring {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 28px;
+        }
+        .splash-ring::before,
+        .splash-ring::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 2px solid rgba(211, 84, 0, 0.35);
+        }
+        .splash-ring::before {
+            animation: splash-pulse 2.4s ease-out infinite;
+        }
+        .splash-ring::after {
+            animation: splash-pulse 2.4s ease-out infinite 1.2s;
+        }
+        @keyframes splash-pulse {
+            0%   { transform: scale(0.7); opacity: 0.9; }
+            100% { transform: scale(1.35); opacity: 0; }
+        }
+        .splash-monogram {
+            position: relative;
+            width: 104px;
+            height: 104px;
+            border-radius: 50%;
+            background: linear-gradient(145deg, #d35400, #a94a00);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(211, 84, 0, 0.35), inset 0 0 0 4px rgba(255,255,255,0.08);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 2.6rem;
+            font-weight: 700;
+            color: #fff8f0;
+            letter-spacing: 1px;
+        }
+        .splash-brand {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 3.2rem;
+            font-weight: 700;
+            letter-spacing: 6px;
+            color: #fdf6ec;
+            text-transform: uppercase;
+            opacity: 0;
+            animation: splash-fade-up 1s ease forwards 0.3s;
+        }
+        .splash-tagline {
+            margin-top: 10px;
+            font-size: 0.95rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: #d9a066;
+            opacity: 0;
+            animation: splash-fade-up 1s ease forwards 0.7s;
+        }
+        @keyframes splash-fade-up {
+            from { opacity: 0; transform: translateY(14px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        .splash-loader {
+            margin-top: 34px;
+            width: 160px;
+            height: 3px;
+            border-radius: 3px;
+            background: rgba(255,255,255,0.12);
+            overflow: hidden;
+        }
+        .splash-loader-bar {
+            height: 100%;
+            width: 40%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, #d35400, #f1a352, #d35400);
+            animation: splash-loading 1.6s ease-in-out infinite;
+        }
+        @keyframes splash-loading {
+            0%   { transform: translateX(-100%); }
+            100% { transform: translateX(350%); }
+        }
+        body.splash-lock {
+            overflow: hidden;
+        }
+        /* ================= END: Splash / Startup Display ================= */
     </style>
 </head>
 <body>
+
+    <!-- ================= START: Splash / Startup Display ================= -->
+    <div id="splash-screen">
+        <div class="splash-bg-slides">
+            <div class="splash-bg-slide"></div>
+            <div class="splash-bg-slide"></div>
+            <div class="splash-bg-slide"></div>
+            <div class="splash-bg-slide"></div>
+        </div>
+        <div class="splash-bg-overlay"></div>
+        <div class="splash-ring">
+            <div class="splash-monogram">D</div>
+        </div>
+        <div class="splash-brand">Dulce</div>
+        <div class="splash-tagline">Baked with Love</div>
+        <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+    </div>
+    <!-- ================= END: Splash / Startup Display ================= -->
 
     <nav>
         <div class="logo">Sweet Crust Bakery</div>
@@ -352,6 +534,31 @@
         
         renderMenu('All');
         updateCartUI();
+
+        // ================= START: Splash / Startup Display Logic =================
+        (function () {
+            document.body.classList.add('splash-lock');
+            const splash = document.getElementById('splash-screen');
+            const MIN_DISPLAY_TIME = 1800; // ms - keep it on screen long enough to register as a real intro
+            const startTime = Date.now();
+
+            function hideSplash() {
+                const elapsed = Date.now() - startTime;
+                const remaining = Math.max(MIN_DISPLAY_TIME - elapsed, 0);
+                setTimeout(() => {
+                    splash.classList.add('splash-hidden');
+                    document.body.classList.remove('splash-lock');
+                    setTimeout(() => splash.remove(), 850);
+                }, remaining);
+            }
+
+            if (document.readyState === 'complete') {
+                hideSplash();
+            } else {
+                window.addEventListener('load', hideSplash);
+            }
+        })();
+        // ================= END: Splash / Startup Display Logic =================
     </script>
 </body>
 </html>
