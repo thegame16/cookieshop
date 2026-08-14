@@ -87,6 +87,150 @@
         .checkout-form input, .checkout-form textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 6px; font-family: inherit; font-size: 1rem; }
         .checkout-form input:focus, .checkout-form textarea:focus { outline: none; border-color: var(--secondary-color); box-shadow: 0 0 5px rgba(211, 84, 0, 0.2); }
         .whatsapp-btn { background-color: #25D366; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
+
+        /* NEW: Product Detail Page (quantity/size selection) */
+        .product-page {
+            position: fixed;
+            inset: 0;
+            z-index: 3000;
+            background: var(--bg-color);
+            overflow-y: auto;
+            transform: translateY(30px);
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+            transition: opacity 0.35s ease, transform 0.35s ease, visibility 0.35s ease;
+        }
+        .product-page.active {
+            opacity: 1;
+            transform: translateY(0);
+            visibility: visible;
+            pointer-events: auto;
+        }
+        .product-page-nav {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 1.2rem 5%;
+            background: var(--primary-color);
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+        .product-page-back {
+            background: rgba(255,255,255,0.12);
+            border: none;
+            color: #fff;
+            padding: 9px 18px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.4px;
+            transition: background 0.25s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .product-page-back:hover { background: rgba(255,255,255,0.25); }
+        .product-page-hero {
+            width: 100%;
+            height: 42vh;
+            min-height: 260px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+        .product-page-hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.55) 100%);
+        }
+        .product-page-title-wrap {
+            position: absolute;
+            bottom: 24px;
+            left: 5%;
+            right: 5%;
+            z-index: 1;
+        }
+        .product-page-title {
+            font-family: var(--font-display);
+            font-style: italic;
+            font-weight: 800;
+            font-size: 2.6rem;
+            color: #fff;
+            text-shadow: 1px 2px 6px rgba(0,0,0,0.4);
+        }
+        .product-page-body {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 3rem 5% 4rem;
+            text-align: center;
+        }
+        .product-page-subtitle {
+            font-family: var(--font-body);
+            color: var(--text-color);
+            font-size: 1.05rem;
+            margin-bottom: 2.2rem;
+            opacity: 0.75;
+            letter-spacing: 0.3px;
+        }
+        .variant-tiles {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 25px;
+        }
+        .variant-tile {
+            background: #fff;
+            border: 2px solid #f0e6da;
+            border-radius: 12px;
+            padding: 2rem 1.5rem;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .variant-tile:hover {
+            transform: translateY(-6px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            border-color: var(--secondary-color);
+        }
+        .variant-tile h3 {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        .variant-tile .variant-price {
+            font-family: var(--font-body);
+            color: var(--secondary-color);
+            font-weight: 700;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+        }
+        body.page-lock { overflow: hidden; }
+
+        /* Simplified menu tiles for products that open a detail page */
+        .card.variant-card { cursor: pointer; }
+        .card.variant-card .card-body { text-align: center; padding-bottom: 22px; }
+        .card.variant-card .view-options-hint {
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--secondary-color);
+            opacity: 0;
+            transform: translateY(4px);
+            transition: opacity 0.25s ease, transform 0.25s ease;
+        }
+        .card.variant-card:hover .view-options-hint {
+            opacity: 1;
+            transform: translateY(0);
+        }
         .whatsapp-btn:hover { background-color: #128C7E; }
 
         footer { background: var(--primary-color); color: #fff; text-align: center; padding: 30px 20px; margin-top: 50px; font-family: var(--font-body); }
@@ -374,6 +518,22 @@
         </div>
     </div>
 
+    <!-- NEW: Product Detail Page (quantity/size selection) -->
+    <div class="product-page" id="product-page">
+        <nav class="product-page-nav">
+            <button class="product-page-back" onclick="closeProductPage()">← Back to Menu</button>
+        </nav>
+        <div class="product-page-hero" id="product-page-hero">
+            <div class="product-page-title-wrap">
+                <h1 class="product-page-title" id="product-page-title"></h1>
+            </div>
+        </div>
+        <div class="product-page-body">
+            <p class="product-page-subtitle">Choose your size below:</p>
+            <div class="variant-tiles" id="product-page-variants"></div>
+        </div>
+    </div>
+
     <footer id="contact">
         <p> PANTAN P & T |  (233) 55 540 1993 </p>
         <p>&copy; 2026 Blessed Bakes.</p>
@@ -392,16 +552,22 @@
             { 
                 id: 1, 
                 name: 'Classic Chocolate Chip Cookies', 
-                price: 3.50, 
                 category: 'Dessert', 
-                img: 'chocolatechip.jpeg' 
+                img: 'cookies-boxed.jpg',
+                variants: [
+                    { label: '3 Cookies', price: 10.50 },  // TODO: confirm bundle price
+                    { label: '6 Cookies', price: 21.00 }   // TODO: confirm bundle price
+                ]
             },
             { 
                 id: 2, 
                 name: 'Red Velvet White Chip Cookies', 
-                price: 4.00, 
                 category: 'Dessert', 
-                img: 'redvelvet.jpeg' 
+                img: 'redvelvet.jpeg',
+                variants: [
+                    { label: '3 Cookies', price: 12.00 },  // TODO: confirm bundle price
+                    { label: '6 Cookies', price: 24.00 }   // TODO: confirm bundle price
+                ]
             },
             { 
                 id: 3, 
@@ -412,20 +578,16 @@
             },
             { 
                 id: 4, 
-                name: 'Crispy Spring Rolls - Box of 6', 
-                price: 0.00, // TODO: update with actual price 
+                name: 'Crispy Spring Rolls', 
                 category: 'Savory', 
-                img: 'springrolls-box.jpg' 
+                img: 'springrolls-box.jpg',
+                variants: [
+                    { label: 'Box of 5', price: 0.00 },   // TODO: update with actual price
+                    { label: 'Box of 10', price: 0.00 }   // TODO: update with actual price
+                ]
             },
             { 
                 id: 5, 
-                name: 'Crispy Spring Rolls - Box of 12', 
-                price: 0.00, // TODO: update with actual price 
-                category: 'Savory', 
-                img: 'springrolls-box.jpg' 
-            },
-            { 
-                id: 6, 
                 name: 'Frozen Spring Rolls - Pack of 10', 
                 price: 0.00, // TODO: update with actual price 
                 category: 'Savory', 
@@ -444,15 +606,31 @@
 
             filteredProducts.forEach(product => {
                 const card = document.createElement('div');
-                card.className = 'card';
-                card.innerHTML = `
-                    <img src="${product.img}" alt="${product.name}">
-                    <div class="card-body">
-                        <h3>${product.name}</h3>
-                        <p class="price">₵${product.price.toFixed(2)}</p>
-                        <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Order</button>
-                    </div>
-                `;
+
+                if (product.variants && product.variants.length) {
+                    // Product has multiple quantity/size options: simple tile, opens its own page
+                    card.className = 'card variant-card';
+                    card.onclick = () => openProductPage(product.id);
+                    card.innerHTML = `
+                        <img src="${product.img}" alt="${product.name}">
+                        <div class="card-body">
+                            <h3>${product.name}</h3>
+                            <span class="view-options-hint">View Options →</span>
+                        </div>
+                    `;
+                } else {
+                    // Standard single-price product (unchanged behavior)
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <img src="${product.img}" alt="${product.name}">
+                        <div class="card-body">
+                            <h3>${product.name}</h3>
+                            <p class="price">₵${product.price.toFixed(2)}</p>
+                            <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Order</button>
+                        </div>
+                    `;
+                }
+
                 menuGrid.appendChild(card);
             });
         }
@@ -481,13 +659,69 @@
             }
         }
 
+        // NEW: Product Detail Page logic (for products sold in multiple quantities/sizes)
+        function openProductPage(productId) {
+            const product = products.find(p => p.id === productId);
+            if (!product || !product.variants) return;
+
+            document.getElementById('product-page-title').innerText = product.name;
+            document.getElementById('product-page-hero').style.backgroundImage = `url('${product.img}')`;
+
+            const variantsContainer = document.getElementById('product-page-variants');
+            variantsContainer.innerHTML = '';
+            product.variants.forEach((variant, index) => {
+                const tile = document.createElement('div');
+                tile.className = 'variant-tile';
+                tile.innerHTML = `
+                    <h3>${variant.label}</h3>
+                    <p class="variant-price">₵${variant.price.toFixed(2)}</p>
+                    <button class="btn" onclick="addVariantToCart(${product.id}, ${index})">Add to Order</button>
+                `;
+                variantsContainer.appendChild(tile);
+            });
+
+            document.getElementById('product-page').classList.add('active');
+            document.body.classList.add('page-lock');
+            window.scrollTo(0, 0);
+        }
+
+        function closeProductPage() {
+            document.getElementById('product-page').classList.remove('active');
+            document.body.classList.remove('page-lock');
+        }
+
+        function addVariantToCart(productId, variantIndex) {
+            const product = products.find(p => p.id === productId);
+            if (!product || !product.variants || !product.variants[variantIndex]) return;
+            const variant = product.variants[variantIndex];
+            const cartId = `${productId}-v${variantIndex}`;
+
+            const existingItem = cart.find(item => item.id === cartId);
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: cartId,
+                    name: `${product.name} (${variant.label})`,
+                    price: variant.price,
+                    quantity: 1
+                });
+            }
+
+            saveAndRenderCart();
+            closeProductPage();
+            if (!document.getElementById('cart-sidebar').classList.contains('active')) {
+                toggleCart();
+            }
+        }
+
         function removeFromCart(productId) {
-            cart = cart.filter(item => item.id !== productId);
+            cart = cart.filter(item => item.id != productId);
             saveAndRenderCart();
         }
 
         function increaseQty(productId) {
-            const item = cart.find(item => item.id === productId);
+            const item = cart.find(item => item.id == productId);
             if (item) {
                 item.quantity += 1;
                 saveAndRenderCart();
@@ -495,11 +729,11 @@
         }
 
         function decreaseQty(productId) {
-            const item = cart.find(item => item.id === productId);
+            const item = cart.find(item => item.id == productId);
             if (item) {
                 item.quantity -= 1;
                 if (item.quantity <= 0) {
-                    cart = cart.filter(item => item.id !== productId);
+                    cart = cart.filter(item => item.id != productId);
                 } 
                 saveAndRenderCart();
             }
@@ -533,12 +767,12 @@
                                 <h4>${item.name}</h4>
                                 <p>₵${item.price.toFixed(2)} each</p>
                                 <div class="qty-controls">
-                                    <button class="qty-btn" onclick="decreaseQty(${item.id})">−</button>
+                                    <button class="qty-btn" onclick="decreaseQty('${item.id}')">−</button>
                                     <span class="qty-value">${item.quantity}</span>
-                                    <button class="qty-btn" onclick="increaseQty(${item.id})">+</button>
+                                    <button class="qty-btn" onclick="increaseQty('${item.id}')">+</button>
                                 </div>
                             </div>
-                            <button class="remove-btn" onclick="removeFromCart(${item.id})">Remove</button>
+                            <button class="remove-btn" onclick="removeFromCart('${item.id}')">Remove</button>
                         </div>
                     `;
                 });
