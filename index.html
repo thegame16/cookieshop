@@ -16,7 +16,22 @@
         .nav-links a:hover { color: var(--secondary-color); }
         .cart-icon { cursor: pointer; position: relative; font-size: 1.1rem; font-weight: 500; display: flex; align-items: center; gap: 8px; }
         .cart-count { background: var(--secondary-color); color: #fff; border-radius: 50%; padding: 2px 8px; font-size: 0.85rem; position: absolute; top: -10px; right: -15px; font-weight: bold; }
-        .hero { display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 75vh; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=80') center/cover; color: #fff; padding: 0 20px; }
+        .hero { position: relative; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; height: 75vh; background: #2a180d; color: #fff; padding: 0 20px; overflow: hidden; }
+        .hero-bg-slides { position: absolute; inset: 0; z-index: 0; }
+        .hero-bg-slide { position: absolute; inset: 0; background-size: cover; background-position: center; opacity: 0; animation-name: hero-slideshow; animation-duration: 16s; animation-iteration-count: infinite; animation-timing-function: ease-in-out; }
+        .hero-bg-slide:nth-child(1) { background-image: url('https://images.unsplash.com/photo-1509440159596-0249088772ff?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=75'); animation-delay: 0s; }
+        .hero-bg-slide:nth-child(2) { background-image: url('https://images.unsplash.com/photo-1517433670267-08bbd4be890f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=75'); animation-delay: 4s; }
+        .hero-bg-slide:nth-child(3) { background-image: url('https://images.unsplash.com/photo-1587049633312-d628ae50a8ae?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=75'); animation-delay: 8s; }
+        .hero-bg-slide:nth-child(4) { background-image: url('https://images.unsplash.com/photo-1486427944299-d1955d23e34d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1920&q=75'); animation-delay: 12s; }
+        @keyframes hero-slideshow {
+            0%   { opacity: 0; transform: scale(1.08); }
+            4%   { opacity: 1; }
+            20%  { opacity: 1; }
+            25%  { opacity: 0; transform: scale(1.14); }
+            100% { opacity: 0; }
+        }
+        .hero-bg-overlay { position: absolute; inset: 0; z-index: 1; background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)); }
+        .hero > *:not(.hero-bg-slides):not(.hero-bg-overlay) { position: relative; z-index: 2; }
         .hero h1 { font-size: 4rem; margin-bottom: 15px; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
         .hero p { font-size: 1.3rem; margin-bottom: 30px; max-width: 600px; line-height: 1.6; text-shadow: 1px 1px 3px rgba(0,0,0,0.5); }
         .btn { background: var(--secondary-color); color: #fff; border: none; padding: 14px 28px; font-size: 1.1rem; border-radius: 5px; cursor: pointer; transition: background 0.3s; text-decoration: none; font-weight: bold; }
@@ -49,6 +64,10 @@
         .cart-item { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px solid #f0f0f0; padding-bottom: 15px; }
         .cart-item h4 { color: var(--primary-color); margin-bottom: 5px; }
         .cart-item p { color: #666; font-size: 0.95rem; }
+        .qty-controls { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+        .qty-btn { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--primary-color); background: #fff; color: var(--primary-color); font-size: 1rem; font-weight: bold; line-height: 1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background 0.2s, color 0.2s; padding: 0; }
+        .qty-btn:hover { background: var(--primary-color); color: #fff; }
+        .qty-value { min-width: 18px; text-align: center; font-weight: bold; color: var(--text-color); }
         .remove-btn { color: #dc3545; background: none; border: none; cursor: pointer; font-size: 0.9rem; font-weight: bold; }
         .remove-btn:hover { text-decoration: underline; }
         .cart-total { font-size: 1.4rem; font-weight: bold; text-align: right; margin-top: 20px; color: var(--primary-color); border-top: 2px solid #f0f0f0; padding-top: 15px; }
@@ -274,6 +293,13 @@
     </nav>
 
     <section id="home" class="hero">
+        <div class="hero-bg-slides">
+            <div class="hero-bg-slide"></div>
+            <div class="hero-bg-slide"></div>
+            <div class="hero-bg-slide"></div>
+            <div class="hero-bg-slide"></div>
+        </div>
+        <div class="hero-bg-overlay"></div>
         <h1>Freshly Baked Perfection</h1>
         <p>Experience the aroma and taste of artisanal bread, pastries, and cakes made daily from scratch.</p>
         <a href="#menu" class="btn">Explore The Menu</a>
@@ -302,7 +328,7 @@
         </div>
         <div class="cart-items" id="cart-items"></div>
         <div class="cart-total">
-            Total: $<span id="cart-total-price">0.00</span>
+            Total: ₵<span id="cart-total-price">0.00</span>
         </div>
         <button class="btn" style="width: 100%; margin-top: 20px;" onclick="openCheckout()">Proceed to Checkout</button>
     </div>
@@ -395,7 +421,7 @@
                     <img src="${product.img}" alt="${product.name}">
                     <div class="card-body">
                         <h3>${product.name}</h3>
-                        <p class="price">$${product.price.toFixed(2)}</p>
+                        <p class="price">₵${product.price.toFixed(2)}</p>
                         <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Order</button>
                     </div>
                 `;
@@ -432,6 +458,25 @@
             saveAndRenderCart();
         }
 
+        function increaseQty(productId) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity += 1;
+                saveAndRenderCart();
+            }
+        }
+
+        function decreaseQty(productId) {
+            const item = cart.find(item => item.id === productId);
+            if (item) {
+                item.quantity -= 1;
+                if (item.quantity <= 0) {
+                    cart = cart.filter(item => item.id !== productId);
+                } 
+                saveAndRenderCart();
+            }
+        }
+
         function saveAndRenderCart() {
             localStorage.setItem('bakeryCart', JSON.stringify(cart));
             updateCartUI();
@@ -458,7 +503,12 @@
                         <div class="cart-item">
                             <div>
                                 <h4>${item.name}</h4>
-                                <p>$${item.price.toFixed(2)} × ${item.quantity}</p>
+                                <p>₵${item.price.toFixed(2)} each</p>
+                                <div class="qty-controls">
+                                    <button class="qty-btn" onclick="decreaseQty(${item.id})">−</button>
+                                    <span class="qty-value">${item.quantity}</span>
+                                    <button class="qty-btn" onclick="increaseQty(${item.id})">+</button>
+                                </div>
                             </div>
                             <button class="remove-btn" onclick="removeFromCart(${item.id})">Remove</button>
                         </div>
@@ -510,11 +560,11 @@
             let total = 0;
             cart.forEach(item => {
                 const itemTotal = item.price * item.quantity;
-                orderText += `- ${item.quantity}x ${item.name} ($${itemTotal.toFixed(2)})\n`;
+                orderText += `- ${item.quantity}x ${item.name} (₵${itemTotal.toFixed(2)})\n`;
                 total += itemTotal;
             });
             
-            orderText += `\n *Total:* $${total.toFixed(2)}\n`;
+            orderText += `\n *Total:* ₵${total.toFixed(2)}\n`;
             orderText += `\nThank you! order has been confirmed.`;
 
             // Encode the text so it works in a URL
