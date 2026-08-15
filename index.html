@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sweet Crust Bakery</title>
+    <title>DULCE</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,700;1,9..144,500;1,9..144,700;1,9..144,900&family=Work+Sans:wght@400;500;600;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
@@ -461,9 +461,8 @@
         <div class="filters">
             <button class="filter-btn active" onclick="filterMenu('All', this)">All</button>
             <button class="filter-btn" onclick="filterMenu('Bread', this)">Breads</button>
-            <button class="filter-btn" onclick="filterMenu('Pastry', this)">Pastries</button>
-            <button class="filter-btn" onclick="filterMenu('Dessert', this)">Desserts</button>
-            <button class="filter-btn" onclick="filterMenu('Savory', this)">Savory</button>
+            <button class="filter-btn" onclick="filterMenu('Cookies', this)">Desserts</button>
+            <button class="filter-btn" onclick="filterMenu('Spring rolls', this)">Savory</button>
         </div>
 
         <div class="menu-grid" id="menu-grid">
@@ -552,8 +551,8 @@
             { 
                 id: 1, 
                 name: 'Classic Chocolate Chip Cookies', 
-                category: 'Dessert', 
-                img: 'cookies-boxed.jpg',
+                category: 'Cookies', 
+                img: 'chocolatechip (2).jpg',
                 variants: [
                     { label: '3 Cookies', price: 10.50 },  // TODO: confirm bundle price
                     { label: '6 Cookies', price: 21.00 }   // TODO: confirm bundle price
@@ -562,7 +561,7 @@
             { 
                 id: 2, 
                 name: 'Red Velvet White Chip Cookies', 
-                category: 'Dessert', 
+                category: 'Cookies', 
                 img: 'redvelvet.jpeg',
                 variants: [
                     { label: '3 Cookies', price: 12.00 },  // TODO: confirm bundle price
