@@ -88,6 +88,93 @@
         .checkout-form input:focus, .checkout-form textarea:focus { outline: none; border-color: var(--secondary-color); box-shadow: 0 0 5px rgba(211, 84, 0, 0.2); }
         .whatsapp-btn { background-color: #25D366; color: white; display: flex; align-items: center; justify-content: center; gap: 10px; margin-top: 10px; }
 
+        /* NEW: MTN MoMo Payment Modal */
+        .momo-card {
+            background: linear-gradient(145deg, #fff9e6, #fff);
+            border: 1px solid #ffe08a;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .mtn-logo {
+            flex-shrink: 0;
+            width: 58px;
+            height: 58px;
+            border-radius: 50%;
+            background: #FFCC00;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15), inset 0 0 0 3px rgba(0,0,0,0.06);
+        }
+        .mtn-logo span {
+            font-family: var(--font-body);
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: 0.5px;
+            color: #000;
+        }
+        .momo-details { flex: 1; }
+        .momo-details .momo-label {
+            font-family: var(--font-body);
+            font-size: 0.75rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #a37a00;
+            margin-bottom: 4px;
+        }
+        .momo-details .momo-number {
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.35rem;
+            color: var(--primary-color);
+            letter-spacing: 0.5px;
+        }
+        .momo-details .momo-name {
+            font-family: var(--font-body);
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-color);
+            margin-top: 2px;
+        }
+        .momo-amount-box {
+            background: var(--primary-color);
+            border-radius: 10px;
+            padding: 16px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .momo-amount-box .amount-label {
+            font-family: var(--font-body);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #e0c9a6;
+        }
+        .momo-amount-box .amount-value {
+            font-family: var(--font-display);
+            font-weight: 800;
+            font-size: 1.7rem;
+            color: #FFCC00;
+            letter-spacing: 0.3px;
+        }
+        .momo-instructions {
+            font-family: var(--font-body);
+            font-size: 0.92rem;
+            color: #555;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .done-btn { width: 100%; background: #FFCC00; color: #1a1a1a; }
+        .done-btn:hover { background: #e6b800; }
+
         /* NEW: Product Detail Page (quantity/size selection) */
         .product-page {
             position: fixed;
@@ -483,6 +570,38 @@
         <button class="btn" style="width: 100%; margin-top: 20px;" onclick="openCheckout()">Proceed to Checkout</button>
     </div>
 
+    <!-- NEW: MTN MoMo Payment Modal -->
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closePayment()">✖</span>
+            <h2>Payment & Checkout</h2>
+
+            <div class="momo-card">
+                <div class="mtn-logo"><span>MTN</span></div>
+                <div class="momo-details">
+                    <div class="momo-label">Send Payment To</div>
+                    <div class="momo-number">+233 545501993</div>
+                    <div class="momo-name">ERICA BRENYA</div>
+                </div>
+            </div>
+
+            <div class="momo-amount-box">
+                <span class="amount-label">Amount to Send</span>
+                <span class="amount-value">₵<span id="payment-amount">0.00</span></span>
+            </div>
+
+            <p class="momo-instructions">Please copy number and send your payment via USSD, then enter the name registered on your MoMo account below and tap <strong>Done</strong> once the transaction is complete.</p>
+
+            <form class="checkout-form" onsubmit="confirmPayment(event)">
+                <div>
+                    <label for="momo-name-input">Your MoMo Name</label>
+                    <input type="text" id="momo-name-input" required placeholder="Name on your MoMo account">
+                </div>
+                <button type="submit" class="btn done-btn">Done</button>
+            </form>
+        </div>
+    </div>
+
     <!-- NEW: Checkout Modal -->
     <div class="modal-overlay" id="checkout-modal">
         <div class="modal-content">
@@ -546,6 +665,9 @@
         // Example for UK: "447123456789"
         const SELLER_PHONE_NUMBER = "2330207437640"; 
         // ==========================================
+
+        // Holds the buyer's MoMo account name once they confirm payment
+        let momoPayerName = "";
 
         const products = [
             { 
@@ -782,15 +904,44 @@
         }
 
         // NEW: Modal and WhatsApp Logic
+
+        // Step 1: "Proceed to Checkout" opens the MTN MoMo payment popup first
         function openCheckout() {
             if(cart.length === 0) {
                 alert("Your cart is empty! Add some treats first.");
                 return;
             }
-            document.getElementById('checkout-modal').classList.add('active');
-            
+
             // Close the cart sidebar so it's not sitting underneath the modal on mobile
             document.getElementById('cart-sidebar').classList.remove('active');
+
+            // Show the current cart total in the payment popup
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            document.getElementById('payment-amount').innerText = total.toFixed(2);
+
+            document.getElementById('payment-modal').classList.add('active');
+        }
+
+        function closePayment() {
+            document.getElementById('payment-modal').classList.remove('active');
+        }
+
+        // Step 2: Buyer enters their MoMo name and taps "Done" once payment is sent
+        function confirmPayment(event) {
+            event.preventDefault();
+
+            const momoNameInput = document.getElementById('momo-name-input');
+            momoPayerName = momoNameInput.value.trim();
+
+            if (!momoPayerName) {
+                alert("Please enter the name on your MoMo account.");
+                return;
+            }
+
+            document.getElementById('payment-modal').classList.remove('active');
+
+            // Step 3: move on to delivery details
+            document.getElementById('checkout-modal').classList.add('active');
         }
 
         function closeCheckout() {
@@ -815,7 +966,8 @@
             let orderText = `🍞 *New Bakery Order!*\n\n`;
             orderText += ` *Name:* ${name}\n`;
             orderText += ` *Delivery Date:* ${formattedDate}\n`;
-            orderText += ` *Address:* ${address}\n\n`;
+            orderText += ` *Address:* ${address}\n`;
+            orderText += ` *MoMo Name:* ${momoPayerName}\n\n`;
             orderText += ` *Order Details:*\n`;
             
             let total = 0;
@@ -837,8 +989,10 @@
             // Open WhatsApp in a new tab
             window.open(whatsappUrl, '_blank');
             
-            // Clear the cart and close the modal
+            // Clear the cart and reset state, then close the modal
             cart = [];
+            momoPayerName = "";
+            document.getElementById('momo-name-input').value = "";
             saveAndRenderCart();
             closeCheckout();
         }
