@@ -666,6 +666,13 @@
         const SELLER_PHONE_NUMBER = "2330207437640"; 
         // ==========================================
 
+        // ==========================================
+        // GOOGLE SHEET ORDER LOG
+        // Paste the "Web app" URL you get after deploying the Apps Script
+        // (see setup instructions) between the quotes below.
+        const ORDER_LOG_URL = "PASTE_YOUR_APPS_SCRIPT_WEB_APP_URL_HERE";
+        // ==========================================
+
         // Holds the buyer's MoMo account name once they confirm payment
         let momoPayerName = "";
 
@@ -948,6 +955,27 @@
             document.getElementById('checkout-modal').classList.remove('active');
         }
 
+        // NEW: Sends the completed order to your private Google Sheet via Apps Script.
+        // Uses text/plain content-type + no-cors so the browser doesn't block the
+        // request on CORS preflight (Apps Script web apps don't handle OPTIONS).
+        // Because it's "no-cors" we can't read a response back, but the row still
+        // gets written on Google's side as long as the URL is correct.
+        function logOrderToSheet(orderData) {
+            if (!ORDER_LOG_URL || ORDER_LOG_URL.indexOf("https://script.google.com/macros/s/AKfycbxXxu-EZiN2dALBTk-knXTVTW8YEEcpTrp78MOwh7_tuzQ7SQYpsxXXg8ZzxcCaQiWnDw/exec") === 0) {
+                console.warn("Order log skipped: ORDER_LOG_URL is not configured yet.");
+                return;
+            }
+            fetch(ORDER_LOG_URL, {
+                method: "POST",
+                mode: "no-cors",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify(orderData)
+            }).catch(err => {
+                // Never let a logging failure block the customer's WhatsApp order
+                console.error("Could not log order to sheet:", err);
+            });
+        }
+
         function submitWhatsAppOrder(event) {
             // Prevent the form from refreshing the page
             event.preventDefault();
@@ -979,6 +1007,17 @@
             
             orderText += `\n *Total:* ₵${total.toFixed(2)}\n`;
             orderText += `\nThank you! order has been confirmed.`;
+
+            // Log this order to your private Google Sheet (amount owed + MoMo name
+            // included, so you can cross-check against what actually lands in MoMo)
+            logOrderToSheet({
+                customerName: name,
+                deliveryDate: formattedDate,
+                address: address,
+                momoName: momoPayerName,
+                orderSummary: cart.map(item => `${item.quantity}x ${item.name} (₵${(item.price * item.quantity).toFixed(2)})`).join(" | "),
+                amountDue: total.toFixed(2)
+            });
 
             // Encode the text so it works in a URL
             const encodedText = encodeURIComponent(orderText);
