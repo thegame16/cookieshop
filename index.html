@@ -670,7 +670,7 @@
         // GOOGLE SHEET ORDER LOG
         // Paste the "Web app" URL you get after deploying the Apps Script
         // (see setup instructions) between the quotes below.
-        const ORDER_LOG_URL = "https://script.google.com/macros/s/AKfycbxXxu-EZiN2dALBTk-knXTVTW8YEEcpTrp78MOwh7_tuzQ7SQYpsxXXg8ZzxcCaQiWnDw/exec";
+        const ORDER_LOG_URL = "https://script.google.com/macros/s/AKfycbz05ClrxJdG7FXXzHrcctBH8y56rX19s3cdjOBrSi4aLlKs41-BWwipSfZD-gnQwnAU/exec";
         // ==========================================
 
         // Holds the buyer's MoMo account name once they confirm payment
@@ -961,7 +961,7 @@
         // Because it's "no-cors" we can't read a response back, but the row still
         // gets written on Google's side as long as the URL is correct.
         function logOrderToSheet(orderData) {
-            if (!ORDER_LOG_URL || ORDER_LOG_URL.indexOf("https://script.google.com/macros/s/AKfycbxXxu-EZiN2dALBTk-knXTVTW8YEEcpTrp78MOwh7_tuzQ7SQYpsxXXg8ZzxcCaQiWnDw/exec") === 0) {
+            if (!ORDER_LOG_URL || ORDER_LOG_URL.indexOf("PASTE_YOUR") === 0) {
                 console.warn("Order log skipped: ORDER_LOG_URL is not configured yet.");
                 return;
             }
