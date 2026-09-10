@@ -345,6 +345,80 @@
             background: var(--secondary-color);
         }
 
+        /* ================= WEEKEND-ONLY MEAT BREAD ================= */
+
+        .card.weekend-closed {
+            position: relative;
+            cursor: default;
+        }
+
+        .card.weekend-closed:hover {
+            transform: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        }
+
+        .card.weekend-closed img {
+            filter:
+                grayscale(35%)
+                brightness(0.55);
+            transition: filter 0.3s ease;
+        }
+
+        .card.weekend-closed::after {
+            content: "";
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            height: 220px;
+            background: rgba(42, 24, 13, 0.25);
+            pointer-events: none;
+        }
+
+        .weekend-closed-badge {
+            position: absolute;
+            top: 110px;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 3;
+
+            width: 82%;
+            padding: 14px 18px;
+
+            background: rgba(42, 24, 13, 0.90);
+            color: #fff;
+
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 8px;
+
+            font-family: var(--font-display);
+            font-style: italic;
+            font-weight: 700;
+            font-size: 1.2rem;
+            text-align: center;
+
+            box-shadow:
+                0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        .weekend-available {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 3;
+
+            background: #25a65a;
+            color: #fff;
+
+            padding: 6px 10px;
+            border-radius: 20px;
+
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.6px;
+        }
+
         /* ================= CART ================= */
 
         .cart-sidebar {
@@ -1201,6 +1275,7 @@
         /* ================= MOBILE ================= */
 
         @media (max-width: 768px) {
+
             .nav-links {
                 display: none;
             }
@@ -1236,6 +1311,12 @@
 
             .momo-details .momo-number {
                 font-size: 1.1rem;
+            }
+
+            .weekend-closed-badge {
+                font-size: 1rem;
+                width: 88%;
+                padding: 12px 10px;
             }
         }
     </style>
@@ -1281,6 +1362,7 @@
         </div>
 
         <ul class="nav-links">
+
             <li>
                 <a href="#home">Home</a>
             </li>
@@ -1292,11 +1374,21 @@
             <li>
                 <a href="#contact">Visit Us</a>
             </li>
+
         </ul>
 
-        <div class="cart-icon" onclick="toggleCart()">
+        <div
+            class="cart-icon"
+            onclick="toggleCart()">
+
             Cart
-            <span class="cart-count" id="cart-count">0</span>
+
+            <span
+                class="cart-count"
+                id="cart-count">
+                0
+            </span>
+
         </div>
 
     </nav>
@@ -1306,10 +1398,12 @@
     <section id="home" class="hero">
 
         <div class="hero-bg-slides">
+
             <div class="hero-bg-slide"></div>
             <div class="hero-bg-slide"></div>
             <div class="hero-bg-slide"></div>
             <div class="hero-bg-slide"></div>
+
         </div>
 
         <div class="hero-bg-overlay"></div>
@@ -1323,7 +1417,9 @@
             pastries, and cakes made daily from scratch.
         </p>
 
-        <a href="#menu" class="btn">
+        <a
+            href="#menu"
+            class="btn">
             Explore The Menu
         </a>
 
@@ -1331,7 +1427,9 @@
 
     <!-- ================= MENU ================= -->
 
-    <section id="menu" class="menu">
+    <section
+        id="menu"
+        class="menu">
 
         <h2>
             Fresh From The Oven
@@ -1398,15 +1496,19 @@
         </div>
 
         <div class="cart-total">
+
             Total:
             ₵<span id="cart-total-price">0.00</span>
+
         </div>
 
         <button
             class="btn"
             style="width:100%; margin-top:20px;"
             onclick="openCheckout()">
+
             Proceed to Checkout
+
         </button>
 
     </div>
@@ -1466,11 +1568,13 @@
             </div>
 
             <p class="momo-instructions">
+
                 Please copy the number and send your payment
                 via USSD, then enter the name registered on
                 your MoMo account below and tap
                 <strong>Done</strong> once the transaction
                 is complete.
+
             </p>
 
             <form
@@ -1494,7 +1598,9 @@
                 <button
                     type="submit"
                     class="btn done-btn">
+
                     Done
+
                 </button>
 
             </form>
@@ -1602,7 +1708,9 @@
             <button
                 class="product-page-back"
                 onclick="closeProductPage()">
+
                 ← Back to Menu
+
             </button>
 
         </nav>
@@ -1706,12 +1814,17 @@
                 ]
             },
 
+            /* ==================================================
+               WEEKEND-ONLY MEAT BREAD
+            ================================================== */
+
             {
                 id: 3,
                 name: "Savory Stuffed Meat Bread",
                 price: 6.50,
                 category: "Bread",
-                img: "meatbreas.jpeg"
+                img: "meatbreas.jpeg",
+                weekendOnly: true
             },
 
             {
@@ -1751,6 +1864,29 @@
             document.getElementById("menu-grid");
 
         /* ==================================================
+           WEEKEND AVAILABILITY
+        ================================================== */
+
+        function isWeekend() {
+
+            const day =
+                new Date().getDay();
+
+            /*
+             * Sunday = 0
+             * Saturday = 6
+             */
+
+            return day === 0 || day === 6;
+        }
+
+        function isWeekendOnlyProduct(product) {
+
+            return product &&
+                   product.weekendOnly === true;
+        }
+
+        /* ==================================================
            MENU RENDERING
         ================================================== */
 
@@ -1771,6 +1907,55 @@
                 const card =
                     document.createElement("div");
 
+                /*
+                 * WEEKEND-ONLY PRODUCT
+                 *
+                 * Monday-Friday:
+                 * Keep the card visible,
+                 * fade the image,
+                 * show "Available on weekends only".
+                 */
+
+                if (
+                    isWeekendOnlyProduct(product) &&
+                    !isWeekend()
+                ) {
+
+                    card.className =
+                        "card weekend-closed";
+
+                    card.innerHTML = `
+
+                        <img
+                            src="${product.img}"
+                            alt="${product.name}">
+
+                        <div class="weekend-closed-badge">
+                            Available on weekends only
+                        </div>
+
+                        <div class="card-body">
+
+                            <h3>
+                                ${product.name}
+                            </h3>
+
+                            <p class="price">
+                                ₵${product.price.toFixed(2)}
+                            </p>
+
+                        </div>
+                    `;
+
+                    menuGrid.appendChild(card);
+
+                    return;
+                }
+
+                /*
+                 * PRODUCTS WITH VARIANTS
+                 */
+
                 if (
                     product.variants &&
                     product.variants.length
@@ -1784,9 +1969,13 @@
 
                     card.innerHTML = `
 
-                        <img
-                            src="${product.img}"
-                            alt="${product.name}">
+                        <div style="position:relative;">
+
+                            <img
+                                src="${product.img}"
+                                alt="${product.name}">
+
+                        </div>
 
                         <div class="card-body">
 
@@ -1803,13 +1992,33 @@
 
                 } else {
 
+                    /*
+                     * NORMAL PRODUCTS
+                     * Including weekend meat bread
+                     * when Saturday/Sunday arrives.
+                     */
+
                     card.className = "card";
 
                     card.innerHTML = `
 
-                        <img
-                            src="${product.img}"
-                            alt="${product.name}">
+                        <div style="position:relative;">
+
+                            <img
+                                src="${product.img}"
+                                alt="${product.name}">
+
+                            ${
+                                isWeekendOnlyProduct(product)
+                                    ? `
+                                        <span class="weekend-available">
+                                            Available this weekend
+                                        </span>
+                                      `
+                                    : ""
+                            }
+
+                        </div>
 
                         <div class="card-body">
 
@@ -1824,7 +2033,9 @@
                             <button
                                 class="add-to-cart"
                                 onclick="addToCart(${product.id})">
+
                                 Add to Order
+
                             </button>
 
                         </div>
@@ -1835,7 +2046,10 @@
             });
         }
 
-        function filterMenu(category, btnElement) {
+        function filterMenu(
+            category,
+            btnElement
+        ) {
 
             document
                 .querySelectorAll(".filter-btn")
@@ -1846,6 +2060,79 @@
             btnElement.classList.add("active");
 
             renderMenu(category);
+        }
+
+        /* ==================================================
+           AUTOMATIC WEEKEND MENU REFRESH
+        ================================================== */
+
+        function scheduleWeekendRefresh() {
+
+            /*
+             * Check every minute.
+             *
+             * This means the product will automatically
+             * switch between available/unavailable while
+             * the customer has the website open.
+             */
+
+            let lastWeekendState =
+                isWeekend();
+
+            setInterval(function () {
+
+                const currentWeekendState =
+                    isWeekend();
+
+                if (
+                    currentWeekendState !==
+                    lastWeekendState
+                ) {
+
+                    lastWeekendState =
+                        currentWeekendState;
+
+                    /*
+                     * Re-render the currently selected
+                     * menu category.
+                     */
+
+                    const activeFilter =
+                        document.querySelector(
+                            ".filter-btn.active"
+                        );
+
+                    let category =
+                        "All";
+
+                    if (activeFilter) {
+
+                        category =
+                            activeFilter.innerText
+                                .trim();
+
+                        /*
+                         * Convert displayed button names
+                         * to product categories.
+                         */
+
+                        if (category === "Breads") {
+                            category = "Bread";
+                        }
+
+                        if (category === "Desserts") {
+                            category = "Cookies";
+                        }
+
+                        if (category === "Savory") {
+                            category = "Savory";
+                        }
+                    }
+
+                    renderMenu(category);
+                }
+
+            }, 60000);
         }
 
         /* ==================================================
@@ -1867,6 +2154,25 @@
                 );
 
             if (!product) return;
+
+            /*
+             * SECURITY CHECK:
+             * Even if somebody manually triggers
+             * addToCart(3) during the week,
+             * the meat bread cannot be added.
+             */
+
+            if (
+                isWeekendOnlyProduct(product) &&
+                !isWeekend()
+            ) {
+
+                alert(
+                    "Savory Stuffed Meat Bread is available on weekends only."
+                );
+
+                return;
+            }
 
             const existingItem =
                 cart.find(
@@ -1892,6 +2198,7 @@
                     .getElementById("cart-sidebar")
                     .classList.contains("active")
             ) {
+
                 toggleCart();
             }
         }
@@ -1956,7 +2263,9 @@
                                     ${index}
                                 );
                             ">
+
                             Add to Order
+
                         </button>
                     `;
 
@@ -1968,7 +2277,9 @@
                 .getElementById("product-page")
                 .classList.add("active");
 
-            document.body.classList.add("page-lock");
+            document.body.classList.add(
+                "page-lock"
+            );
 
             window.scrollTo(0, 0);
         }
@@ -1979,7 +2290,9 @@
                 .getElementById("product-page")
                 .classList.remove("active");
 
-            document.body.classList.remove("page-lock");
+            document.body.classList.remove(
+                "page-lock"
+            );
         }
 
         function addVariantToCart(
@@ -2037,6 +2350,7 @@
                     .getElementById("cart-sidebar")
                     .classList.contains("active")
             ) {
+
                 toggleCart();
             }
         }
@@ -2063,6 +2377,23 @@
                 );
 
             if (item) {
+
+                /*
+                 * Prevent increasing weekend meat bread
+                 * if the weekend has ended.
+                 */
+
+                if (
+                    item.id == 3 &&
+                    !isWeekend()
+                ) {
+
+                    alert(
+                        "Savory Stuffed Meat Bread is available on weekends only."
+                    );
+
+                    return;
+                }
 
                 item.quantity += 1;
 
@@ -2200,7 +2531,9 @@
                                         '${item.id}'
                                     )
                                 ">
+
                                 Remove
+
                             </button>
 
                         </div>
@@ -2227,6 +2560,36 @@
                 );
 
                 return;
+            }
+
+            /*
+             * Final safety check before checkout.
+             */
+
+            if (!isWeekend()) {
+
+                const hasMeatBread =
+                    cart.some(
+                        item =>
+                            item.id == 3
+                    );
+
+                if (hasMeatBread) {
+
+                    cart =
+                        cart.filter(
+                            item =>
+                                item.id != 3
+                        );
+
+                    saveAndRenderCart();
+
+                    alert(
+                        "Savory Stuffed Meat Bread is available on weekends only. It has been removed from your order."
+                    );
+
+                    return;
+                }
             }
 
             document
@@ -2374,6 +2737,28 @@
                 return;
             }
 
+            /*
+             * Final weekend-only validation.
+             */
+
+            if (!isWeekend()) {
+
+                const hasMeatBread =
+                    cart.some(
+                        item =>
+                            item.id == 3
+                    );
+
+                if (hasMeatBread) {
+
+                    alert(
+                        "Savory Stuffed Meat Bread is available on weekends only."
+                    );
+
+                    return;
+                }
+            }
+
             const formattedDate =
                 new Date(date).toLocaleString(
                     undefined,
@@ -2492,20 +2877,10 @@
 
         updateCartUI();
 
+        scheduleWeekendRefresh();
+
         /* ==================================================
            FIXED SPLASH SCREEN LOGIC
-           
-           IMPORTANT:
-           The old version depended entirely on the
-           window "load" event. If an external image,
-           font, or resource was slow, the splash could
-           remain on screen indefinitely.
-
-           This version:
-           - Keeps the splash for at least 1.8 seconds.
-           - Hides it when the page loads.
-           - Forces it to hide after 3.5 seconds.
-           - Therefore it cannot get permanently stuck.
         ================================================== */
 
         (function () {
@@ -2577,31 +2952,15 @@
                 );
             }
 
-            /*
-             * Normal behavior:
-             * hide when everything finishes loading.
-             */
-
             window.addEventListener(
                 "load",
                 hideSplash
             );
 
-            /*
-             * SAFETY FALLBACK:
-             * Never let the splash remain
-             * indefinitely.
-             */
-
             setTimeout(
                 hideSplash,
                 MAX_DISPLAY_TIME
             );
-
-            /*
-             * If the DOM is already ready,
-             * don't wait for external resources.
-             */
 
             if (
                 document.readyState ===
